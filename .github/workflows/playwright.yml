@@ -51,11 +51,11 @@ jobs:
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
-        server_port: 587
+        server_port: 465
         secure: true
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: 'Org_LQ_ERP - Playwright Test Report'
+        subject: 'Org_LQ_ERP - Playwright Test Report - ${{ github.run_number }}'
         to: ${{ secrets.EMAIL_TO || secrets.EMAIL_USERNAME }}
         from: ${{ secrets.EMAIL_USERNAME }}
         html_body: |
@@ -70,5 +70,4 @@ jobs:
           <p>Please find the attached test reports.</p>
           <p><a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">View Full Report on GitHub</a></p>
         attachments: reports/report.html,playwright-report/index.html
-        ignore_cert: true
-        convert_markdown: true
+        priority: normal
