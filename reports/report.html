@@ -1,0 +1,366 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Report - LearnQoch ERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card.passed {
+            border-left-color: #10b981;
+        }
+
+        .stat-card.failed {
+            border-left-color: #ef4444;
+        }
+
+        .stat-card.skipped {
+            border-left-color: #f59e0b;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-card.passed .stat-number {
+            color: #10b981;
+        }
+
+        .stat-card.failed .stat-number {
+            color: #ef4444;
+        }
+
+        .stat-card.skipped .stat-number {
+            color: #f59e0b;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-section {
+            padding: 30px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .progress-label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #374151;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .progress-fill-passed {
+            background: linear-gradient(90deg, #10b981, #059669);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+
+        .table-section {
+            padding: 30px;
+        }
+
+        .table-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 18px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 18px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.95em;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-passed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-failed {
+            background: #fee2e2;
+            color: #7f1d1d;
+        }
+
+        .status-skipped {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .duration {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            color: #6b7280;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.85em;
+            }
+
+            th, td {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test Execution Report</h1>
+            <p>LearnQoch ERP - Automation Test Suite</p>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-label">Total Tests</div>
+                <div class="stat-number">4</div>
+            </div>
+            <div class="stat-card passed">
+                <div class="stat-label">✅ Passed</div>
+                <div class="stat-number">3</div>
+            </div>
+            <div class="stat-card failed">
+                <div class="stat-label">❌ Failed</div>
+                <div class="stat-number">0</div>
+            </div>
+            <div class="stat-card skipped">
+                <div class="stat-label">⏭️ Skipped</div>
+                <div class="stat-number">0</div>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-label">Overall Pass Rate: 75.00%</div>
+            <div class="progress-bar">
+                <div class="progress-fill-passed" style="width: 75.00%">
+                    75.00%
+                </div>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <div class="table-title">📋 Test Cases Details</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>TC ID</th>
+                        <th>Test Description</th>
+                        <th>Status</th>
+                        <th>Duration (ms)</th>
+                        <th>Project</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td><strong>N/A</strong></td>
+                        <td>Login setup - generate session</td>
+                        <td>
+                            <span class="status-badge status-passed">
+                                ✅ passed
+                            </span>
+                        </td>
+                        <td><span class="duration">5353ms</span></td>
+                        <td>auth.setup.spec.js</td>
+                        <td>
+                          
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td><strong>TC01</strong></td>
+                        <td>TC01: Open Add New College Form</td>
+                        <td>
+                            <span class="status-badge status-passed">
+                                ✅ passed
+                            </span>
+                        </td>
+                        <td><span class="duration">2034ms</span></td>
+                        <td>College Suite</td>
+                        <td>
+                          
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td><strong>TC02</strong></td>
+                        <td>TC02: Validate Required Fields on Empty Submit</td>
+                        <td>
+                            <span class="status-badge status-passed">
+                                ✅ passed
+                            </span>
+                        </td>
+                        <td><span class="duration">1491ms</span></td>
+                        <td>College Suite</td>
+                        <td>
+                          
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td><strong>TC03</strong></td>
+                        <td>TC03: Add New College with Random Data</td>
+                        <td>
+                            <span class="status-badge status-timedOut">
+                                ⏭️ timedOut
+                            </span>
+                        </td>
+                        <td><span class="duration">6170ms</span></td>
+                        <td>College Suite</td>
+                        <td>
+                          <div style="max-width:320px; color:#7f1d1d; font-weight:600">Test timeout - element not found or action failed</div>
+                          <details style="margin-top:6px;"><summary style="cursor:pointer">View stack</summary><pre style="white-space:pre-wrap; color:#374151">Test timeout of 5000ms exceeded.</pre></details>
+                                                    <div style="margin-top:6px">Attachments:<ul><li><a href="C:\LQ_ERP_28_11_2025 - Copy\test-results\Academics-College-College--a9bed-ew-College-with-Random-Data-chromium\test-failed-1.png" target="_blank">screenshot</a></li><li><a href="C:\LQ_ERP_28_11_2025 - Copy\test-results\Academics-College-College--a9bed-ew-College-with-Random-Data-chromium\video.webm" target="_blank">video</a></li><li><a href="C:\LQ_ERP_28_11_2025 - Copy\test-results\Academics-College-College--a9bed-ew-College-with-Random-Data-chromium\error-context.md" target="_blank">error-context</a></li></ul></div>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>Generated on 28/11/2025, 4:37:40 pm</p>
+        </div>
+    </div>
+</body>
+</html>
+    

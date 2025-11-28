@@ -1,0 +1,42 @@
+//base/baseTest.js
+import { test as base, expect } from "@playwright/test";
+import fs from "fs";
+import path from "path";
+
+export const test = base;
+
+// Global afterEach hook: capture screenshot on failure with TC ID in filename
+test.afterEach(async ({ page }, testInfo) => {
+	if (testInfo.status !== "passed") {
+		try {
+			const match = testInfo.title.match(/(TC\d+)/i);
+			const tcId = match ? match[1] : "N_A";
+			const safeTitle = testInfo.title.replace(/[^a-z0-9_-]/gi, "_");
+			const dir = path.join(process.cwd(), "test-results", "screenshots");
+			if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+			const filename = `${tcId}_${safeTitle}_${Date.now()}.png`;
+			const filepath = path.join(dir, filename);
+			await page.screenshot({ path: filepath, fullPage: true });
+			// optional console log for visibility
+			console.log(`📸 Failure screenshot saved: ${filepath}`);
+
+			// Also print a short, human-friendly failure summary to terminal
+			const errMsg = testInfo.error?.message || '';
+			let shortReason = '';
+			if (errMsg.includes('strict mode violation')) {
+				const m = errMsg.match(/locator\(([^)]+)\)/);
+				const locator = m ? m[1].replace(/["'\\]/g, '').trim() : 'locator';
+				shortReason = `Action failed on ${locator} (matched multiple elements)`;
+			} else if (errMsg.startsWith('FIELD_VALIDATION:')) {
+				shortReason = errMsg.replace('FIELD_VALIDATION:', '').trim();
+			} else {
+				shortReason = errMsg.split('\n')[0];
+			}
+			if (shortReason) console.log('🔍 Short failure reason:', shortReason);
+		} catch (err) {
+			console.log("Error saving failure screenshot:", err);
+		}
+	}
+});
+
+export { expect };
