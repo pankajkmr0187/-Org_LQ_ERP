@@ -11,7 +11,7 @@ export class CollegePage {
 
     // Form fields (correct locators from HTML)
     this.collegeName = page.locator('input[name="name"]');
-    this.collegeCode = page.locator('input[name="ccode"]');
+    this.collegeCode = page.locator('input[name="code"]');
     this.collegeType = page.locator('select[name="type"]');
     this.collegeAddress = page.locator('textarea[name="address"]');
     this.collegeEmail = page.locator('input[name="email"]');
