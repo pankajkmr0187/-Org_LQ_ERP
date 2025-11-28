@@ -4,7 +4,7 @@ export default defineConfig({
   testDir: "./tests",
   
   // Timeout configuration
-  timeout: 5000, // 5 seconds per test
+  timeout: 30000, // 30 seconds per test (for CI environment)
   expect: {
     timeout: 5000 // 5 seconds for assertions
   },
@@ -29,7 +29,7 @@ export default defineConfig({
       testMatch: ["**/auth.setup.spec.js"],
       use: {
         storageState: undefined,
-        headless: false,
+        headless: true,
         screenshot: "only-on-failure",
         video: "retain-on-failure",
         launchOptions: process.env.SLOW_MO ? { slowMo: Number(process.env.SLOW_MO) } : undefined
@@ -41,7 +41,7 @@ export default defineConfig({
       name: "chromium",
       use: {
         browserName: "chromium",
-        headless: false,
+        headless: true,
         storageState: "auth.json",
         screenshot: "only-on-failure",
         video: "retain-on-failure",

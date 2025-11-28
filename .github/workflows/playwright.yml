@@ -22,11 +22,13 @@ jobs:
       run: npm ci
     
     - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      run: npx playwright install --with-deps chromium
     
     - name: Run Playwright tests
       run: npx playwright test
       continue-on-error: true
+      env:
+        CI: true
     
     - name: Upload Custom HTML Report
       if: always()
@@ -50,11 +52,12 @@ jobs:
       with:
         server_address: smtp.gmail.com
         server_port: 587
+        secure: true
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
         subject: 'Org_LQ_ERP - Playwright Test Report'
-        to: ${{ secrets.EMAIL_TO }}
-        from: Org_LQ_ERP Tests
+        to: ${{ secrets.EMAIL_TO || secrets.EMAIL_USERNAME }}
+        from: ${{ secrets.EMAIL_USERNAME }}
         html_body: |
           <h2>Org_LQ_ERP - Playwright Test Execution Report</h2>
           <p><strong>Repository:</strong> ${{ github.repository }}</p>
